@@ -23,7 +23,7 @@ const createEmployee = async (
 
   if (!employee) throw new Error('Error: employee is not created');
 
-  return res.status(200).json(employee);
+  return res.status(201).json(employee);
 };
 
 export const employeeMiddelwares = {
