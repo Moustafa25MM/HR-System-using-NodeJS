@@ -33,6 +33,12 @@ const employeeLogin = async (req: Request, res: Response) => {
   }
 };
 
+const employeeLogout = async (req: Request, res: Response) => {
+  res.clearCookie('token');
+  res.status(200).json({ message: 'Logged out successfully' });
+};
+
 export const loginMethods = {
   employeeLogin,
+  employeeLogout,
 };
