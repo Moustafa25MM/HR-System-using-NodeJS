@@ -11,6 +11,17 @@ router.post(
   attendanceMiddlewares.createAttendance
 );
 
+router.get(
+  '/find/:id',
+  authMethods.isHRAuthorized,
+  attendanceMiddlewares.getAttendanceById
+);
+router.get(
+  '/employee/:id',
+  authMethods.isHRAuthorized,
+  attendanceMiddlewares.getAttendanceByEmployee
+);
+
 router.patch(
   '/update/:id',
   authMethods.isHRAuthorized,

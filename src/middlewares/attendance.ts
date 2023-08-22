@@ -52,8 +52,36 @@ const updateAttendance = async (req: Request, res: Response) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const getAttendanceById = async (req: Request, res: Response) => {
+  const { id } = req.params;
 
+  try {
+    const attendance = await attendanceControllers.getAttendanceById(id);
+
+    if (!attendance) {
+      throw new Error('Attendance not found');
+    }
+
+    return res.status(200).json(attendance);
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const getAttendanceByEmployee = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const attendance = await attendanceControllers.getAttendanceByEmployee(id);
+
+    return res.status(200).json(attendance);
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 export const attendanceMiddlewares = {
   createAttendance,
   updateAttendance,
+  getAttendanceById,
+  getAttendanceByEmployee,
 };
