@@ -2,7 +2,9 @@ import { body } from 'express-validator';
 
 const checkEmail = body('email')
   .isString()
-  .normalizeEmail()
+  .normalizeEmail({
+    all_lowercase: false,
+  })
   .trim()
   .notEmpty()
   .withMessage('Email is required')

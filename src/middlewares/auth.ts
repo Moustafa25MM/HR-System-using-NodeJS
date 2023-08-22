@@ -38,7 +38,6 @@ const isHRAuthorized = async (req: any, res: any, next: NextFunction) => {
     const payload: { id: string } = jwt.verify(token, JWTSecret as string) as {
       id: string;
     };
-    console.log(payload.id);
     const employeeData = await employeeControllers.getEmployeeById(payload.id);
     if (!employeeData) {
       return res.status(400);

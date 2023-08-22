@@ -15,10 +15,11 @@ router.post(
   employeeMiddelwares.createEmployee
 );
 router.get(
-  '',
+  '/all',
   authMethods.isHRAuthorized,
   employeeMiddelwares.getAllEmployeesByGroup
 );
+
 router.patch(
   '/profile/:id',
   authMethods.isHRAuthorized,
