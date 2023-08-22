@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import * as dotenv from 'dotenv';
 import { authMethods } from './auth';
 import { employeeControllers } from '../controllers/employee';
+import { models } from 'mongoose';
 
 dotenv.config();
 
@@ -22,6 +23,10 @@ const createEmployee = async (
   password = authMethods.hashPassword(password);
 
   try {
+    const existingEmployee = await employeeControllers.getEmployee(email);
+    if (existingEmployee) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
     const employee = await employeeControllers.create({
       name,
       password,
@@ -41,7 +46,7 @@ const createEmployee = async (
 const updateEmployeeFunc = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const { name, email, group } = req.body;
+  let { name, email, group } = req.body;
 
   let { password } = req.body;
 
@@ -66,7 +71,12 @@ const updateEmployeeFunc = async (req: Request, res: Response) => {
     if (!existingEmployee) {
       throw new Error('Employee not found');
     }
-
+    if (email) {
+      const employeeWithEmail = await employeeControllers.getEmployee(email);
+      if (employeeWithEmail && String(employeeWithEmail._id) !== id) {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
+    }
     const updatedResult = await employeeControllers.updateEmployee(
       id,
       updateObject
@@ -80,7 +90,7 @@ const updateEmployeeFunc = async (req: Request, res: Response) => {
       throw new Error('Failed to fetch updated employee data');
     }
 
-    const { _id, name, email, group } = updatedEmployee;
+    const { _id, name, group } = updatedEmployee;
 
     const updatedEmployeeData = {
       id: _id,
