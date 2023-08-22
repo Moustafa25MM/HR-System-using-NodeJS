@@ -105,7 +105,27 @@ const updateEmployeeFunc = async (req: Request, res: Response) => {
   }
 };
 
+const getAllEmployeesByGroup = async (req: Request, res: Response) => {
+  const { group } = req.query;
+
+  try {
+    let employees;
+    if (group === 'normal') {
+      employees = await employeeControllers.getAllNormalEmployees();
+    } else if (group === 'hr') {
+      employees = await employeeControllers.getAllHREmployees();
+    } else {
+      return res.status(400).json({ error: 'Invalid group query' });
+    }
+
+    return res.status(200).json(employees);
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 export const employeeMiddelwares = {
   createEmployee,
   updateEmployeeFunc,
+  getAllEmployeesByGroup,
 };

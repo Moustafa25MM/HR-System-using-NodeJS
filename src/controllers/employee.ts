@@ -22,9 +22,25 @@ const getEmployeeById = (id: string) => {
 const updateEmployee = (id: string, data: UpdateEmployeeData) =>
   models.Employee.updateOne({ _id: id }, data, { runValidators: true });
 
+const getAllEmployeesByGroup = async (group: string) => {
+  const employees = models.Employee.find({ group });
+  return employees;
+};
+
+const getAllNormalEmployees = async () => {
+  return getAllEmployeesByGroup('Normal Employee');
+};
+
+const getAllHREmployees = async () => {
+  return getAllEmployeesByGroup('HR');
+};
+
 export const employeeControllers = {
   create,
   getEmployee,
   updateEmployee,
   getEmployeeById,
+  getAllEmployeesByGroup,
+  getAllHREmployees,
+  getAllNormalEmployees,
 };

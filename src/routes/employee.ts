@@ -11,11 +11,21 @@ router.post(
   '/create',
   authMethods.isHRAuthorized,
   validations.checkEmail,
+  validations.checkName,
+  validations.checkPassowrd,
   employeeMiddelwares.createEmployee
+);
+router.get(
+  '',
+  authMethods.isHRAuthorized,
+  employeeMiddelwares.getAllEmployeesByGroup
 );
 router.patch(
   '/profile/:id',
   authMethods.isHRAuthorized,
+  validations.checkEmail,
+  validations.checkName,
+  validations.checkPassowrd,
   employeeMiddelwares.updateEmployeeFunc
 );
 
