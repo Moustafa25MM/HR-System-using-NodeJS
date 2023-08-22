@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import * as dotenv from 'dotenv';
 import { authMethods } from './auth';
 import { employeeControllers } from '../controllers/employee';
-import { models } from 'mongoose';
+import { paginationOption } from '../libs/paginations';
 
 dotenv.config();
 
@@ -117,8 +117,24 @@ const getAllEmployeesByGroup = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ error: 'Invalid group query' });
     }
+    const pageSize = req.query.pageSize
+      ? parseInt(req.query.pageSize as string)
+      : 1;
+    const pageNumber = req.query.pageNumber
+      ? parseInt(req.query.pageNumber as string)
+      : 1;
+    const paginatedEmployees = employees.slice(
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize
+    );
 
-    return res.status(200).json(employees);
+    const totalDocs = employees.length;
+    const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
+
+    return res.status(200).json({
+      pagination: paginationOptions,
+      employees: paginatedEmployees,
+    });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }
