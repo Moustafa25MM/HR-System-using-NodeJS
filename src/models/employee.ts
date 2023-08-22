@@ -8,10 +8,11 @@ enum EmployeeGroup {
 interface IEmployee extends Document {
   name: string;
   email: string;
+  password: string;
   group: EmployeeGroup;
 }
 
-const EmployeeSchema: Schema = new Schema(
+const EmployeeSchema: Schema = new Schema<IEmployee>(
   {
     name: {
       type: String,
