@@ -11,4 +11,10 @@ router.post(
   attendanceMiddlewares.createAttendance
 );
 
+router.patch(
+  '/update/:id',
+  authMethods.isHRAuthorized,
+  attendanceMiddlewares.updateAttendance
+);
+
 export const attendanceRoute: Router = router;
