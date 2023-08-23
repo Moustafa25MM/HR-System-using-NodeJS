@@ -119,7 +119,7 @@ const getAllEmployeesByGroup = async (req: Request, res: Response) => {
     }
     const pageSize = req.query.pageSize
       ? parseInt(req.query.pageSize as string)
-      : 1;
+      : 10;
     const pageNumber = req.query.pageNumber
       ? parseInt(req.query.pageNumber as string)
       : 1;
@@ -139,9 +139,24 @@ const getAllEmployeesByGroup = async (req: Request, res: Response) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const getEmployeeById = async (req: any, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+
+  try {
+    const employee = await employeeControllers.getEmployeeById(id);
+    if (!employee) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    return res.status(200).json(employee);
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 export const employeeMiddelwares = {
   createEmployee,
   updateEmployeeFunc,
   getAllEmployeesByGroup,
+  getEmployeeById,
 };

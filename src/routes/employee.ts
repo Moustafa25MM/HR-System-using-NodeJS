@@ -19,7 +19,11 @@ router.get(
   authMethods.isHRAuthorized,
   employeeMiddelwares.getAllEmployeesByGroup
 );
-
+router.get(
+  '/emp/:id',
+  authMethods.isHRAuthorized,
+  employeeMiddelwares.getEmployeeById
+);
 router.patch(
   '/profile/:id',
   authMethods.isHRAuthorized,
