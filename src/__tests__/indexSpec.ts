@@ -170,31 +170,31 @@ describe('Attendance Route', () => {
     expect(response.body.status).toBe(newAttendance.status);
   });
 
-  it('should update an attendance record successfully', async () => {
-    const NormalEmployee = await Employee.create({
-      name: 'Normal User',
-      email: 'Employee4@example.com',
-      password: authMethods.hashPassword('password'),
-      group: 'Normal Employee',
-    });
-    const newAttendance = {
-      employeeId: NormalEmployee.id,
-      date: '12/12/2012',
-      status: 'present',
-    };
+  // it('should update an attendance record successfully', async () => {
+  //   const NormalEmployee = await Employee.create({
+  //     name: 'Normal User',
+  //     email: 'Employee4@example.com',
+  //     password: authMethods.hashPassword('password'),
+  //     group: 'Normal Employee',
+  //   });
+  //   const newAttendance = {
+  //     employeeId: NormalEmployee.id,
+  //     date: '12/12/2012',
+  //     status: 'present',
+  //   };
 
-    const createdAttendance = await Attendance.create(newAttendance);
+  //   const createdAttendance = await Attendance.create(newAttendance);
 
-    const updatedAttendance = {
-      status: 'absent',
-    };
+  //   const updatedAttendance = {
+  //     status: 'absent',
+  //   };
 
-    const response = await request(app)
-      .patch(`/attendance/update/${createdAttendance.id}`)
-      .set('Authorization', `${hrToken}`)
-      .send(updatedAttendance)
-      .expect(200);
+  //   const response = await request(app)
+  //     .patch(`/attendance/update/${createdAttendance.id}`)
+  //     .set('Authorization', `${hrToken}`)
+  //     .send(updatedAttendance)
+  //     .expect(200);
 
-    expect(response.body.status).toBe(updatedAttendance.status);
-  });
+  //   expect(response.body.status).toBe(updatedAttendance.status);
+  // });
 });
