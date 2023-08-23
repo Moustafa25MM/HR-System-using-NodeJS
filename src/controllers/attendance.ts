@@ -29,9 +29,14 @@ const getAttendanceByEmployee = (employeeId: string) => {
   return models.Attendance.find({ employee: employeeId });
 };
 
+const deleteAttendance = (attendanceId: string) => {
+  return models.Attendance.findByIdAndDelete(attendanceId);
+};
+
 export const attendanceControllers = {
   createAttendance,
   updateAttendance,
   getAttendanceById,
   getAttendanceByEmployee,
+  deleteAttendance,
 };

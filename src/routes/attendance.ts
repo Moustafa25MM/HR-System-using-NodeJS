@@ -28,4 +28,10 @@ router.patch(
   attendanceMiddlewares.updateAttendance
 );
 
+router.delete(
+  '/delete/:id',
+  authMethods.isHRAuthorized,
+  attendanceMiddlewares.deleteAttendance
+);
+
 export const attendanceRoute: Router = router;

@@ -79,9 +79,26 @@ const getAttendanceByEmployee = async (req: Request, res: Response) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const deleteAttendance = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const deletedAttendance = await attendanceControllers.deleteAttendance(id);
+
+    if (!deletedAttendance) {
+      throw new Error('No attendance found to delete');
+    }
+
+    return res.status(200).json({ message: 'Attendance deleted successfully' });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 export const attendanceMiddlewares = {
   createAttendance,
   updateAttendance,
   getAttendanceById,
   getAttendanceByEmployee,
+  deleteAttendance,
 };
