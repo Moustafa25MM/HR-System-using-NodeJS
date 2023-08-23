@@ -3,7 +3,6 @@ import bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 import { NextFunction } from 'express';
-import { models } from 'mongoose';
 import { employeeControllers } from '../controllers/employee';
 
 dotenv.config();
