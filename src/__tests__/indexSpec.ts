@@ -3,6 +3,7 @@ import { app } from '..';
 import mongoose from 'mongoose';
 import Employee from '../models/employee';
 import { authMethods } from '../middlewares/auth';
+import Attendance from '../models/attendance';
 
 describe('Login Route', () => {
   beforeAll(async () => {
@@ -122,5 +123,78 @@ describe('Employee Route', () => {
     expect(response.body.email).toBe(updatedEmployee.email);
     expect(response.body.group).toBe(updatedEmployee.group);
     expect(response.body.password).toBeUndefined();
+  });
+});
+
+describe('Attendance Route', () => {
+  let hrToken: string | String;
+
+  beforeAll(async () => {
+    const mongoUrl = process.env.MONGO_URL as string;
+    await mongoose.connect(mongoUrl, {});
+    await Attendance.deleteMany({});
+    const hrEmployee = await Employee.create({
+      name: 'HR User',
+      email: 'hrEmployee2@example.com',
+      password: authMethods.hashPassword('password'),
+      group: 'HR',
+    });
+
+    hrToken = authMethods.generateJWT({ id: hrEmployee.id });
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
+  it('should create a new attendance record successfully', async () => {
+    const NormalEmployee = await Employee.create({
+      name: 'Normal User',
+      email: 'Employee5@example.com',
+      password: authMethods.hashPassword('password'),
+      group: 'Normal Employee',
+    });
+    const newAttendance = {
+      employeeId: NormalEmployee.id,
+      date: new Date(),
+      status: 'present',
+    };
+
+    const response = await request(app)
+      .post('/attendance/create')
+      .set('Authorization', `${hrToken}`)
+      .send(newAttendance)
+      .expect(201);
+
+    expect(response.body.date).toBe(newAttendance.date.toISOString());
+    expect(response.body.status).toBe(newAttendance.status);
+  });
+
+  it('should update an attendance record successfully', async () => {
+    const NormalEmployee = await Employee.create({
+      name: 'Normal User',
+      email: 'Employee4@example.com',
+      password: authMethods.hashPassword('password'),
+      group: 'Normal Employee',
+    });
+    const newAttendance = {
+      employeeId: NormalEmployee.id,
+      date: '12/12/2012',
+      status: 'present',
+    };
+
+    const createdAttendance = await Attendance.create(newAttendance);
+
+    const updatedAttendance = {
+      status: 'absent',
+    };
+
+    const response = await request(app)
+      .patch(`/attendance/update/${createdAttendance.id}`)
+      .set('Authorization', `${hrToken}`)
+      .send(updatedAttendance)
+      .expect(200);
+
+    expect(response.body.status).toBe(updatedAttendance.status);
   });
 });

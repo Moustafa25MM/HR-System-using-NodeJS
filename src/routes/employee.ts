@@ -23,9 +23,6 @@ router.get(
 router.patch(
   '/profile/:id',
   authMethods.isHRAuthorized,
-  validations.checkEmail,
-  validations.checkName,
-  validations.checkPassowrd,
   employeeMiddelwares.updateEmployeeFunc
 );
 
