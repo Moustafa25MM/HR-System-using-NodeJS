@@ -119,7 +119,7 @@ const getAllEmployeesByGroup = async (req: Request, res: Response) => {
     }
     const pageSize = req.query.pageSize
       ? parseInt(req.query.pageSize as string)
-      : 10;
+      : 5;
     const pageNumber = req.query.pageNumber
       ? parseInt(req.query.pageNumber as string)
       : 1;

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { attendanceControllers } from '../controllers/attendance';
+import { paginationOption } from '../libs/paginations';
 
 enum AttendanceStatus {
   ABSENT = 'absent',
@@ -74,7 +75,24 @@ const getAttendanceByEmployee = async (req: Request, res: Response) => {
   try {
     const attendance = await attendanceControllers.getAttendanceByEmployee(id);
 
-    return res.status(200).json(attendance);
+    const pageSize = req.query.pageSize
+      ? parseInt(req.query.pageSize as string)
+      : 8;
+    const pageNumber = req.query.pageNumber
+      ? parseInt(req.query.pageNumber as string)
+      : 1;
+    const paginatedAttendances = attendance.slice(
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize
+    );
+
+    const totalDocs = attendance.length;
+    const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
+
+    return res.status(200).json({
+      pagination: paginationOptions,
+      attendance: paginatedAttendances,
+    });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }
