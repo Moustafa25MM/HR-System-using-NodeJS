@@ -124,6 +124,57 @@ describe('Employee Route', () => {
     expect(response.body.group).toBe(updatedEmployee.group);
     expect(response.body.password).toBeUndefined();
   });
+  it('getEmployeeDetails should return the details of a specific employee', async () => {
+    const newEmployee = {
+      name: 'Another Test User',
+      email: 'testEmployee3@example.com',
+      password: 'password',
+      group: 'Normal Employee',
+    };
+
+    const createdEmployee = await Employee.create(newEmployee);
+    const response = await request(app)
+      .get(`/employees/emp/${createdEmployee.id}`)
+      .set('Authorization', `${hrToken}`)
+      .expect(200);
+
+    expect(response.body.name).toBe(newEmployee.name);
+    expect(response.body.email).toBe(newEmployee.email);
+    expect(response.body.group).toBe(newEmployee.group);
+    expect(response.body.password).toBeUndefined();
+  });
+  // Test getAllEmployeesByGroup middleware
+  it('getAllEmployeesByGroup should return paginated employees by group', async () => {
+    // First, create some additional employees
+    for (let i = 12; i < 22; i++) {
+      await Employee.create({
+        name: `Employee ${i}`,
+        email: `employee${i}@example.com`,
+        password: 'password',
+        group: 'Normal Employee',
+      });
+    }
+
+    const response = await request(app)
+      .get('/employees/all?group=normal&pageNumber=1&pageSize=5')
+      .set('Authorization', `${hrToken}`)
+      .expect(200);
+
+    expect(response.body.pagination).toBeDefined();
+    expect(response.body.pagination.page).toBe(1);
+    expect(response.body.pagination.limit).toBe(5);
+    expect(response.body.employees.length).toBe(5);
+  });
+
+  it('getAllEmployeesByGroup should return an error for invalid group', async () => {
+    const response = await request(app)
+      .get('/employees/all?group=invalid&pageNumber=1&pageSize=5')
+      .set('Authorization', `${hrToken}`)
+      .expect(400);
+
+    expect(response.body.error).toBeDefined();
+    expect(response.body.error).toBe('Invalid group query');
+  });
 });
 
 describe('Attendance Route', () => {
@@ -170,31 +221,100 @@ describe('Attendance Route', () => {
     expect(response.body.status).toBe(newAttendance.status);
   });
 
-  // it('should update an attendance record successfully', async () => {
-  //   const NormalEmployee = await Employee.create({
-  //     name: 'Normal User',
-  //     email: 'Employee4@example.com',
-  //     password: authMethods.hashPassword('password'),
-  //     group: 'Normal Employee',
-  //   });
-  //   const newAttendance = {
-  //     employeeId: NormalEmployee.id,
-  //     date: '12/12/2012',
-  //     status: 'present',
-  //   };
+  it('should update an attendance record successfully', async () => {
+    const NormalEmployee = await Employee.create({
+      name: 'Normal User',
+      email: 'Employee4@example.com',
+      password: authMethods.hashPassword('password'),
+      group: 'Normal Employee',
+    });
+    const newAttendance = {
+      employee: NormalEmployee.id,
+      date: '12/12/2012',
+      status: 'present',
+    };
 
-  //   const createdAttendance = await Attendance.create(newAttendance);
+    const createdAttendance = await Attendance.create(newAttendance);
+    const updatedAttendance = {
+      status: 'absent',
+    };
 
-  //   const updatedAttendance = {
-  //     status: 'absent',
-  //   };
+    const response = await request(app)
+      .patch(`/attendance/update/${createdAttendance.id}`)
+      .set('Authorization', `${hrToken}`)
+      .send(updatedAttendance)
+      .expect(200);
 
-  //   const response = await request(app)
-  //     .patch(`/attendance/update/${createdAttendance.id}`)
-  //     .set('Authorization', `${hrToken}`)
-  //     .send(updatedAttendance)
-  //     .expect(200);
+    expect(response.body.status).toBe(updatedAttendance.status);
+  });
+  it('should get an attendance record by its id successfully', async () => {
+    const NormalEmployee = await Employee.create({
+      name: 'Normal User',
+      email: 'Employee8@example.com',
+      password: authMethods.hashPassword('password'),
+      group: 'Normal Employee',
+    });
+    const newAttendance = {
+      employee: NormalEmployee.id,
+      date: '12/12/2012',
+      status: 'present',
+    };
 
-  //   expect(response.body.status).toBe(updatedAttendance.status);
-  // });
+    const createdAttendance = await Attendance.create(newAttendance);
+
+    const response = await request(app)
+      .get(`/attendance/find/${createdAttendance.id}`)
+      .set('Authorization', `${hrToken}`)
+      .expect(200);
+
+    expect(response.body.status).toBe(createdAttendance.status);
+  });
+
+  // Test for getting attendance by employee id
+  it('should get an attendance record by employee id successfully', async () => {
+    const NormalEmployee = await Employee.create({
+      name: 'Normal User',
+      email: 'Employee7@example.com',
+      password: authMethods.hashPassword('password'),
+      group: 'Normal Employee',
+    });
+    const newAttendance = {
+      employee: NormalEmployee.id,
+      date: '12/12/2012',
+      status: 'present',
+    };
+
+    const createdAttendance = await Attendance.create(newAttendance);
+
+    const response = await request(app)
+      .get(`/attendance/employee/${NormalEmployee.id}`)
+      .set('Authorization', `${hrToken}`)
+      .expect(200);
+    // Assuming that the response is an array of attendances
+    expect(response.body.attendance[0].status).toBe(createdAttendance.status);
+  });
+
+  // Test for deleting attendance
+  it('should delete an attendance record successfully', async () => {
+    const NormalEmployee = await Employee.create({
+      name: 'Normal User',
+      email: 'Employee6@example.com',
+      password: authMethods.hashPassword('password'),
+      group: 'Normal Employee',
+    });
+    const newAttendance = {
+      employee: NormalEmployee.id,
+      date: '12/12/2012',
+      status: 'present',
+    };
+
+    const createdAttendance = await Attendance.create(newAttendance);
+
+    const response = await request(app)
+      .delete(`/attendance/delete/${createdAttendance.id}`)
+      .set('Authorization', `${hrToken}`)
+      .expect(200);
+
+    expect(response.body.message).toBe('Attendance deleted successfully');
+  });
 });
