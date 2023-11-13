@@ -22,7 +22,7 @@ const createAttendance = (
 
 const updateAttendance = (
   attendanceId: string,
-  data: Partial<{ date: Date; status: AttendanceStatus; signInTime: Date }>
+  data: Partial<{ date: Date; status: AttendanceStatus; signInTime: String }>
 ) => {
   return models.Attendance.findByIdAndUpdate(attendanceId, data, { new: true });
 };

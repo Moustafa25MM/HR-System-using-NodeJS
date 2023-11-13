@@ -33,7 +33,7 @@ const updateAttendance = async (req: Request, res: Response) => {
     const data: Partial<{
       date: Date;
       status: AttendanceStatus;
-      signInTime: Date;
+      signInTime: String;
     }> = {};
 
     if (date) {
@@ -45,6 +45,7 @@ const updateAttendance = async (req: Request, res: Response) => {
     }
     if (signInTime) {
       data.signInTime = signInTime;
+      console.log(signInTime);
     }
 
     const updatedAttendance = await attendanceControllers.updateAttendance(
