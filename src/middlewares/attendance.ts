@@ -9,13 +9,14 @@ enum AttendanceStatus {
 }
 
 const createAttendance = async (req: Request, res: Response) => {
-  const { employeeId, date, status } = req.body;
+  const { employeeId, date, status, signInTime } = req.body;
 
   try {
     const attendance = await attendanceControllers.createAttendance(
       employeeId,
       date,
-      status
+      status,
+      signInTime
     );
 
     return res.status(201).json(attendance);
@@ -26,10 +27,14 @@ const createAttendance = async (req: Request, res: Response) => {
 
 const updateAttendance = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { date, status } = req.body;
+  const { date, status, signInTime } = req.body;
 
   try {
-    const data: Partial<{ date: Date; status: AttendanceStatus }> = {};
+    const data: Partial<{
+      date: Date;
+      status: AttendanceStatus;
+      signInTime: Date;
+    }> = {};
 
     if (date) {
       data.date = date;
@@ -37,6 +42,9 @@ const updateAttendance = async (req: Request, res: Response) => {
 
     if (status) {
       data.status = status as AttendanceStatus;
+    }
+    if (signInTime) {
+      data.signInTime = signInTime;
     }
 
     const updatedAttendance = await attendanceControllers.updateAttendance(
