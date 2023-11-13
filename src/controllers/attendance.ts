@@ -9,14 +9,20 @@ enum AttendanceStatus {
 const createAttendance = (
   employeeId: string,
   date: Date,
-  status: AttendanceStatus
+  status: AttendanceStatus,
+  signInTime: Date
 ) => {
-  return models.Attendance.create({ employee: employeeId, date, status });
+  return models.Attendance.create({
+    employee: employeeId,
+    date,
+    status,
+    signInTime,
+  });
 };
 
 const updateAttendance = (
   attendanceId: string,
-  data: Partial<{ date: Date; status: AttendanceStatus }>
+  data: Partial<{ date: Date; status: AttendanceStatus; signInTime: Date }>
 ) => {
   return models.Attendance.findByIdAndUpdate(attendanceId, data, { new: true });
 };
