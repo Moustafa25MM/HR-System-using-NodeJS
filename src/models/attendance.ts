@@ -10,6 +10,7 @@ interface IAttendance extends Document {
   employee: mongoose.Types.ObjectId;
   date: Date;
   status: AttendanceStatus;
+  signInTime: Date;
 }
 
 const AttendanceSchema: Schema = new Schema<IAttendance>(
@@ -27,6 +28,10 @@ const AttendanceSchema: Schema = new Schema<IAttendance>(
       type: String,
       required: true,
       enum: Object.values(AttendanceStatus),
+    },
+    signInTime: {
+      type: Date,
+      required: true,
     },
   },
   {
