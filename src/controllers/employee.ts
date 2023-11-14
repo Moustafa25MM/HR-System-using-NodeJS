@@ -5,6 +5,9 @@ type UpdateEmployeeData = {
   password?: string;
   email?: string;
   group?: string;
+  netSalary?: number;
+  grossSalary?: number;
+  task?: string;
 };
 
 const create = (data: any) => models.Employee.create(data);

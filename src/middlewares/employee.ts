@@ -11,13 +11,16 @@ type UpdateEmployeeData = {
   password?: string;
   email?: string;
   group?: string;
+  netSalary?: number;
+  grossSalary?: number;
+  task?: string;
 };
 
 const createEmployee = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { name, email, group } = req.body;
+  const { name, email, group, netSalary, grossSalary, task } = req.body;
   let { password } = req.body;
 
   password = authMethods.hashPassword(password);
@@ -32,6 +35,9 @@ const createEmployee = async (
       password,
       email,
       group,
+      netSalary,
+      grossSalary,
+      task,
     });
 
     if (!employee) {
@@ -46,7 +52,7 @@ const createEmployee = async (
 const updateEmployeeFunc = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  let { name, email, group } = req.body;
+  let { name, email, group, netSalary, grossSalary, task } = req.body;
 
   let { password } = req.body;
 
@@ -59,6 +65,9 @@ const updateEmployeeFunc = async (req: Request, res: Response) => {
     email,
     password,
     group,
+    netSalary,
+    grossSalary,
+    task,
   };
 
   if (Object.values(updateObject).every((value) => value === undefined)) {
@@ -90,13 +99,16 @@ const updateEmployeeFunc = async (req: Request, res: Response) => {
       throw new Error('Failed to fetch updated employee data');
     }
 
-    const { _id, name, group } = updatedEmployee;
+    const { _id, name, group, netSalary, grossSalary, task } = updatedEmployee;
 
     const updatedEmployeeData = {
       id: _id,
       name,
       email,
       group,
+      netSalary,
+      grossSalary,
+      task,
     };
 
     return res.status(200).json(updatedEmployeeData);

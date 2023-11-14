@@ -4,12 +4,21 @@ enum EmployeeGroup {
   HR = 'HR',
   NORMAL_EMPLOYEE = 'Normal Employee',
 }
+enum Task {
+  SOFTWARE = 'Software',
+  BACKEND = 'Backend',
+  FRONTEND = 'Frontend',
+  DEVOPS = 'Devops',
+}
 
 interface IEmployee extends Document {
   name: string;
   email: string;
   password: string;
   group: EmployeeGroup;
+  netSalary: number;
+  grossSalary: number;
+  task: Task;
 }
 
 const EmployeeSchema: Schema = new Schema<IEmployee>(
@@ -37,6 +46,18 @@ const EmployeeSchema: Schema = new Schema<IEmployee>(
       type: String,
       required: true,
       enum: Object.values(EmployeeGroup),
+    },
+    netSalary: {
+      type: Number,
+      min: 0,
+    },
+    grossSalary: {
+      type: Number,
+      min: 0,
+    },
+    task: {
+      type: String,
+      enum: Object.values(Task),
     },
   },
   {
